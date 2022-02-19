@@ -80,16 +80,3 @@ class VGG:
 
             return model
 
-if __name__ == '__main__':
-    # Configurations
-    length = 224  # Length of each Image
-    width = 224  # Width of each Image
-    model_name = 'VGG16_v2'  # DenseNet Models
-    model_width = 16 # Width of the Initial Layer, subsequent layers start from here
-    num_channel = 1  # Number of Input Channels in the Model
-    problem_type = 'Regression' # Classification or Regression
-    output_nums = 1  # Number of Class for Classification Problems, always '1' for Regression Problems
-    #
-    Model = VGG(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, dropout_rate=False).VGG16_v2()
-    Model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0003), loss=tf.keras.losses.MeanAbsoluteError(), metrics=tf.keras.metrics.MeanSquaredError())
-    Model.summary()
