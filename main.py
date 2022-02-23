@@ -63,7 +63,7 @@ if __name__ == '__main__':
     width = 299  # Width of each Image
     # model_name = 'VGG16_v2'  # DenseNet Models
     model_name = 'SVDNet'   # DenseNet Models
-    model_width = 16 # Width of the Initial Layer, subsequent layers start from here
+    model_width = 3 # Width of the Initial Layer, subsequent layers start from here
     num_channel = 1  # Number of Input Channels in the Model
     problem_type = 'Classification' # Classification or Regression
     output_nums = 3  # Number of Class for Classification Problems, always '1' for Regression Problems
