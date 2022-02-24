@@ -14,67 +14,63 @@ def Conv_2D_Block(inputs, model_width, kernel, strides):
 def stem(inputs, num_filters):
     # Construct the Stem Convolution Group
     # inputs : input vector
-    cb = Conv_2D_Block(inputs, num_filters, (3, 3), (1,1))
-    cb = Conv_2D_Block(cb, num_filters, (3, 3), (1,1))
-    return cb
-
-
-def dense_block_1(x, num_filters):
-    if x.shape[1] <= 2:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(x)
+    conv = Conv_2D_Block(inputs, num_filters, (3, 3), (1,1))
+    conv = Conv_2D_Block(conv, num_filters, (3, 3), (1,1))
+    if conv.shape[1] <= 2:
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(conv)
     else:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
-  
-    cb = Conv_2D_Block(pool, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([pool, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    return x
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(conv)    
+    return pool
+
+
+def dense_block_1(x, num_filters):  
+    conv = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
+    conv = Conv_2D_Block(conv, num_filters, (3, 3), (1,1))
+    x = tf.keras.layers.concatenate([x, conv], axis=-1)
+    if conv.shape[1] <= 2:
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(conv)
+    else:
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(conv)
+
+
+    return pool
 
 
 
 def dense_block_2(x, num_filters):
-    if x.shape[1] <= 2:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(x)
+    conv = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
+    conv = Conv_2D_Block(conv, num_filters, (3, 3), (1,1))
+    x = tf.keras.layers.concatenate([x, conv], axis=-1)
+    if conv.shape[1] <= 2:
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(conv)
     else:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
-    cb = Conv_2D_Block(pool, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([pool, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (1, 1), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    return x
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(conv)
+    return pool
 
 
 
 def dense_block_3(x, num_filters):
-    if x.shape[1] <= 2:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(x)
+    conv = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
+    conv = Conv_2D_Block(conv, num_filters, (3, 3), (1,1))
+    conv = Conv_2D_Block(conv, num_filters, (1, 1), (1,1))    
+    x = tf.keras.layers.concatenate([x, conv], axis=-1)
+    if conv.shape[1] <= 2:
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(conv)
     else:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
-    cb = Conv_2D_Block(pool, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([pool, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (1, 1), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    return x
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(conv)
+    return pool
 
 
 def dense_block_4(x, num_filters):
-    if x.shape[1] <= 2:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(x)
+    conv = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
+    conv = Conv_2D_Block(conv, num_filters, (3, 3), (1,1))
+    conv = Conv_2D_Block(conv, num_filters, (1, 1), (1,1))    
+    x = tf.keras.layers.concatenate([x, conv], axis=-1)
+    if conv.shape[1] <= 2:
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(conv)
     else:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
-    cb = Conv_2D_Block(pool, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([pool, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (1, 1), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    return x
-
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(conv)
+    return pool
 
 
 def classifier(inputs, class_number):
@@ -95,7 +91,7 @@ def regressor(inputs, feature_number):
     return out
 
 
-class SVDNet:
+class SVRNet:
     def __init__(self, length, width, num_channel, num_filters, problem_type='Classification',
                  output_nums=1, pooling='max', dropout_rate=False):
         # length: Input Signal Length
@@ -119,12 +115,10 @@ class SVDNet:
         
     def MLP(self, x):
         outputs = []
-        if self.pooling == 'avg':        
-            x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)                
+        if self.pooling == 'avg':                     
             x = tf.keras.layers.GlobalAveragePooling2D()(x)
 
-        elif self.pooling == 'max':
-            x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
+        elif self.pooling == 'max':            
             x = tf.keras.layers.GlobalMaxPooling2D()(x)
 
         # Final Dense Outputting Layer for the outputs
@@ -146,7 +140,7 @@ class SVDNet:
 
         return outputs
 
-    def SVDNet(self):
+    def SVRNet(self):
         inputs = tf.keras.Input((self.length, self.width, self.num_channel))  # The input tensor
         x = tf.keras.layers.experimental.preprocessing.Rescaling(1./255)(inputs)
         stem_block = stem(x, self.num_filters)  # The Stem Convolution Group   

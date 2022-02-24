@@ -1,6 +1,7 @@
 from vgg16  import VGG
 import tensorflow as tf 
 from SVDNet import SVDNet
+from SVRNet import SVRNet
 import skimage.io as io
 import glob
 import numpy as np
@@ -62,7 +63,8 @@ if __name__ == '__main__':
     length = 299  # Length of each Image
     width = 299  # Width of each Image
     # model_name = 'VGG16_v2'  # DenseNet Models
-    model_name = 'SVDNet'   # DenseNet Models
+    model_name = 'SVRNet'   # DenseNet Models   
+    # model_name = 'SVDNet'   # DenseNet Models
     model_width = 3 # Width of the Initial Layer, subsequent layers start from here
     num_channel = 1  # Number of Input Channels in the Model
     problem_type = 'Classification' # Classification or Regression
@@ -74,7 +76,9 @@ if __name__ == '__main__':
     EPOCHS = 100
     
     # model = VGG(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, dropout_rate=0.5).VGG16_v2()
-    model = SVDNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVDNet()   
+    # model = SVDNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVDNet()   
+    model = SVRNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVRNet()  
+
     model.summary()
 
     model.compile(
