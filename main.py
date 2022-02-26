@@ -66,8 +66,8 @@ if __name__ == '__main__':
 
     length = 299  # Length of each Image
     width = 299  # Width of each Image
-    # model_name = 'VGG16_v2'  # DenseNet Models
-    model_name = 'SVRNet'   # DenseNet Models  
+    model_name = 'VGG16_v2'  # DenseNet Models
+    # model_name = 'SVRNet'   # DenseNet Models  
     # model_name = 'SVDNet'   # DenseNet Models
     model_width = 16 # Width of the Initial Layer, subsequent layers start from here
     num_channel = 1  # Number of Input Channels in the Model
@@ -81,20 +81,20 @@ if __name__ == '__main__':
     
 
 
-    if os.path.isdir("SVRNet_model"): 
+    if os.path.isdir("vgg_model"): 
         # model = keras.models.load_model('vgg_model')
         # model = tf.keras.models.load_model('SVDNet_model')
         EPOCHS = 1
-        model = tf.keras.models.load_model('SVRNet_model')
+        model = tf.keras.models.load_model('vgg_modell')
     else:
         EPOCHS = 100  
-        #   model = VGG(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, dropout_rate=0.5).VGG16_v2()
+        model = VGG(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, dropout_rate=0.5).VGG16_v2()
     #     # # model = SVDNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVDNet()  
-        model = SVRNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVRNet()  
+        # model = SVRNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVRNet()  
 
     model.summary()
 
-    dot_img_file = 'model_SVRNet.png'
+    dot_img_file = 'vgg_model.png'
     tf.keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
 
 
@@ -114,8 +114,8 @@ if __name__ == '__main__':
         )
     print(history.history.keys())
 
-    if not os.path.isdir("SVRNet_model"):
-        model.save("SVRNet_model")
+    if not os.path.isdir("vgg_model"):
+        model.save("vgg_model")
 
     loss, acc = model.evaluate(test_data, verbose = 0, batch_size=32)
     print("Loss {}, Accuracy {}".format(loss, acc))
@@ -139,7 +139,7 @@ if __name__ == '__main__':
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig('model_SVRNet_accuracy.png') 
+    plt.savefig('vgg_model_accuracy.png') 
 
     # # summarize history for loss
     plot2 = plt.figure(2)
@@ -149,13 +149,14 @@ if __name__ == '__main__':
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig('model_SVRNet_lost.png')
+    plt.savefig('vgg_model_lost.png')
 
     #confusion_matrix
+    plot3 = plt.figure(3)
     ax = sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
             fmt='.2%', cmap='Blues')
 
-    ax.set_title('Seaborn Confusion Matrix with labels\n\n')
+    ax.set_title('Confusion Matrix with labels\n\n')
     ax.set_xlabel('\nPredicted Values')
     ax.set_ylabel('Actual Values ')
 
@@ -163,5 +164,5 @@ if __name__ == '__main__':
     ax.xaxis.set_ticklabels(['False','True'])
     ax.yaxis.set_ticklabels(['False','True'])
     fig = ax.get_figure()
-    fig.savefig('model_SVRNet_confusion_matrix.png')
+    fig.savefig('vgg_model_confusion_matrix.png')
 
