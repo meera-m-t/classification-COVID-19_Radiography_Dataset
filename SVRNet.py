@@ -27,10 +27,10 @@ def dense_block_1(x, num_filters):
     conv = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
     conv = Conv_2D_Block(conv, num_filters, (3, 3), (1,1))
     x = tf.keras.layers.concatenate([x, conv], axis=-1)
-    if conv.shape[1] <= 2:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(conv)
+    if x.shape[1] <= 2:
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(x)
     else:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(conv)
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
 
 
     return pool
@@ -41,10 +41,10 @@ def dense_block_2(x, num_filters):
     conv = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
     conv = Conv_2D_Block(conv, num_filters, (3, 3), (1,1))
     x = tf.keras.layers.concatenate([x, conv], axis=-1)
-    if conv.shape[1] <= 2:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(conv)
+    if x.shape[1] <= 2:
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(x)
     else:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(conv)
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
     return pool
 
 
@@ -54,10 +54,10 @@ def dense_block_3(x, num_filters):
     conv = Conv_2D_Block(conv, num_filters, (3, 3), (1,1))
     conv = Conv_2D_Block(conv, num_filters, (1, 1), (1,1))    
     x = tf.keras.layers.concatenate([x, conv], axis=-1)
-    if conv.shape[1] <= 2:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(conv)
+    if x.shape[1] <= 2:
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(x)
     else:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(conv)
+        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
     return pool
 
 
@@ -66,11 +66,7 @@ def dense_block_4(x, num_filters):
     conv = Conv_2D_Block(conv, num_filters, (3, 3), (1,1))
     conv = Conv_2D_Block(conv, num_filters, (1, 1), (1,1))    
     x = tf.keras.layers.concatenate([x, conv], axis=-1)
-    if conv.shape[1] <= 2:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(conv)
-    else:
-        pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(conv)
-    return pool
+    return x
 
 
 def classifier(inputs, class_number):
