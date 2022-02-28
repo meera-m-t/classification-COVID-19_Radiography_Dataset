@@ -25,55 +25,61 @@ def dense_block_1(x, num_filters):
     else:
         pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
   
-    cb = Conv_2D_Block(pool, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([pool, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    return x
+    cb = Conv_2D_Block(pool, num_filters, (3, 3), (1,1))    
+    cb = Conv_2D_Block(cb, num_filters, (3, 3), (1,1))    
+    return cb
 
 
 
-def dense_block_2(x, num_filters):
+def dense_block_2(x, y, num_filters):
     if x.shape[1] <= 2:
         pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(x)
     else:
         pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
-    cb = Conv_2D_Block(pool, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([pool, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (1, 1), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    return x
+
+    x = tf.keras.layers.concatenate([pool, y], axis=-1)
+
+    cb = Conv_2D_Block(x, num_filters, (3, 3), (1,1))    
+    cb = Conv_2D_Block(cb, num_filters, (3, 3), (1,1))    
+    cb = Conv_2D_Block(cb, num_filters, (1, 1), (1,1))    
+    return cb
 
 
 
-def dense_block_3(x, num_filters):
+def dense_block_3(x, y, z, num_filters):
     if x.shape[1] <= 2:
         pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(x)
     else:
         pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
-    cb = Conv_2D_Block(pool, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([pool, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (1, 1), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    return x
 
 
-def dense_block_4(x, num_filters):
+    x = tf.keras.layers.concatenate([pool, y], axis=-1)
+    x = tf.keras.layers.concatenate([x, z], axis=-1)
+
+    cb = Conv_2D_Block(x, num_filters, (3, 3), (1,1))    
+    cb = Conv_2D_Block(cb, num_filters, (3, 3), (1,1))    
+    cb = Conv_2D_Block(cb, num_filters, (1, 1), (1,1))    
+    return cb
+
+
+def dense_block_4(x, y, z, w, num_filters):
+
     if x.shape[1] <= 2:
         pool = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(x)
     else:
         pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
-    cb = Conv_2D_Block(pool, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([pool, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (3, 3), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    cb = Conv_2D_Block(x, num_filters, (1, 1), (1,1))
-    x = tf.keras.layers.concatenate([x, cb], axis=-1)
-    return x
+
+
+    x = tf.keras.layers.concatenate([pool, y], axis=-1)
+    x = tf.keras.layers.concatenate([x, z], axis=-1)
+    x = tf.keras.layers.concatenate([x, w], axis=-1)
+
+    
+    cb = Conv_2D_Block(x, num_filters, (3, 3), (1,1))    
+    cb = Conv_2D_Block(cb, num_filters, (3, 3), (1,1))    
+    cb = Conv_2D_Block(cb, num_filters, (1, 1), (1,1))
+    
+    return cb
 
 
 
@@ -152,9 +158,9 @@ class SVDNet:
         stem_block = stem(x, self.num_filters)  # The Stem Convolution Group   
 
         Dense_Block_1 = dense_block_1(stem_block, self.num_filters * 2)
-        Dense_Block_2 = dense_block_2(Dense_Block_1, self.num_filters * 4)
-        Dense_Block_3 = dense_block_3(Dense_Block_2, self.num_filters * 8)
-        Dense_Block_4 = dense_block_4(Dense_Block_3, self.num_filters * 8)        
+        Dense_Block_2 = dense_block_2(stem_block, Dense_Block_1, self.num_filters * 4)
+        Dense_Block_3 = dense_block_3(stem_block, Dense_Block_1, Dense_Block_2, self.num_filters * 8)
+        Dense_Block_4 = dense_block_4(stem_block, Dense_Block_1, Dense_Block_2, Dense_Block_3, self.num_filters * 8)        
         outputs = self.MLP(Dense_Block_4)
         model = tf.keras.Model(inputs, outputs)
 
