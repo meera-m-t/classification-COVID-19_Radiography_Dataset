@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import splitfolders
-for name in ['COVID', 'Lung_Opacity', 'Normal']:
+for name in ['COVID',  'Normal']:
     for file in glob.glob(f"COVID-19_Radiography_Dataset/{name}/*.png"):
         name_file = os.path.basename(file)        
         image = cv2.imread(file)
