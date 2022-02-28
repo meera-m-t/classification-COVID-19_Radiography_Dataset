@@ -14,7 +14,7 @@ $ python preprocessing_data.py
 ```
 
 ## Install
-We used python 3.8 to run this code. TO install all requirements via pip:
+We used python 3.8 to run this code. To install all requirements via pip:
 
 ```bash
 $ pip install -r requirements.txt
