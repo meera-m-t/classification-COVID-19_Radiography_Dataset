@@ -123,14 +123,22 @@ class SVDNet:
         self.pooling = pooling
         self.dropout_rate = dropout_rate
         
-    def MLP(self, x):
+    def MLP(self, x, y, z, w, h):
         outputs = []
         if self.pooling == 'avg':        
-            x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)                
+            pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
+            x = tf.keras.layers.concatenate([pool, y], axis=-1)
+            x = tf.keras.layers.concatenate([x, z], axis=-1)
+            x = tf.keras.layers.concatenate([x, w], axis=-1)
+            x = tf.keras.layers.concatenate([x, h], axis=-1)
             x = tf.keras.layers.GlobalAveragePooling2D()(x)
 
         elif self.pooling == 'max':
-            x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
+            pool = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
+            x = tf.keras.layers.concatenate([pool, y], axis=-1)
+            x = tf.keras.layers.concatenate([x, z], axis=-1)
+            x = tf.keras.layers.concatenate([x, w], axis=-1)
+            x = tf.keras.layers.concatenate([x, h], axis=-1)  
             x = tf.keras.layers.GlobalMaxPooling2D()(x)
 
         # Final Dense Outputting Layer for the outputs
@@ -161,7 +169,7 @@ class SVDNet:
         Dense_Block_2 = dense_block_2(stem_block, Dense_Block_1, self.num_filters * 4)
         Dense_Block_3 = dense_block_3(stem_block, Dense_Block_1, Dense_Block_2, self.num_filters * 8)
         Dense_Block_4 = dense_block_4(stem_block, Dense_Block_1, Dense_Block_2, Dense_Block_3, self.num_filters * 8)        
-        outputs = self.MLP(Dense_Block_4)
+        outputs = self.MLP(stem_block, Dense_Block_1, Dense_Block_2, Dense_Block_3, Dense_Block_4)
         model = tf.keras.Model(inputs, outputs)
 
         return model
