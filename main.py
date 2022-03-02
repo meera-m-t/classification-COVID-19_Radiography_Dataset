@@ -1,6 +1,7 @@
 from vgg16  import VGG
 import tensorflow as tf 
-from SVDNet import SVDNet
+import argparse
+from SVDNet_1 import SVDNet
 from SVRNet import SVRNet
 import skimage.io as io
 from sklearn.metrics import confusion_matrix
@@ -60,41 +61,74 @@ def  call_test_data(DATA_DIR,IMG_SIZE):
                 )
     return test_data.cache().prefetch(buffer_size=AUTOTUNE)         
 
-if __name__ == '__main__':  
-    path_train='output/train' 
-    path_test='output/test' 
+def main():
+    parser = argparse.ArgumentParser(description='add, modify and delete upstream nodes')
+    parser.add_argument(
+       '-p_train','--path_train', required=False, default='output/train', type=str, help='path train')
+    parser.add_argument(
+        '-p_test','--path_test', required=False, default='output/test', type=str, help='path test')
+    parser.add_argument(
+        '-l', '--length', required=False, default=299, type=int, help='length of image')
+    parser.add_argument(
+        '-w', '--width', required=False, default=299, type=int, help='width of image')
+    parser.add_argument(
+        '-m', '--model_name',choices=['VGG16', 'SVRNet', 'SVDNet'], required=False, default='VGG16', type=str, help='model_name')
+    parser.add_argument(
+        '-t', '--problem_type', choices=['Classification', 'Regression'], required=False, default='Classification', type=str, help='problem_type')
+    parser.add_argument(
+        '-o', '--output_nums', required=False, default=2, type=int, help='output_num')
+    parser.add_argument(
+        '-mw', '--model_width', required=False, default=16, type=int, help='width of the Initial Layer, subsequent layers start from here')
+    parser.add_argument(
+        '-c', '--num_channel', required=False, default=1, type=int, help='number of channel of the image')
+    parser.add_argument(
+          '-b', '--batch_size', required=False, default=32, type=int, help='batch size')
+  
+    args = parser.parse_args()
 
-    length = 299  # Length of each Image
-    width = 299  # Width of each Image
-    model_name = 'VGG16_v2'  # DenseNet Models
-    # model_name = 'SVRNet'   # DenseNet Models  
-    # model_name = 'SVDNet'   # DenseNet Models
-    model_width = 16 # Width of the Initial Layer, subsequent layers start from here
-    num_channel = 1  # Number of Input Channels in the Model
-    problem_type = 'Classification' # Classification or Regression
-    output_nums = 2  # Number of Class for Classification Problems, always '1' for Regression Problems
- 
+
+    path_train = args.path_train
+    path_test = args.path_test
+    length = args.length  
+    width = args.width
+    model_name = args.model_name
+    model_width = args.model_width
+    num_channel = args.num_channel
+    problem_type = args.problem_type
+    output_nums = args.output_nums 
     train_data, val_data = train_val_split(path_train, length)
     test_data = call_test_data(path_test, length)
-
-    BATCH_SIZE = 32
+    BATCH_SIZE = args.batch_size
     
+    if model_name == 'VGG16':
+        if os.path.isdir("vgg_model"):
+            model = keras.models.load_model('vgg_model')
+            EPOCHS = 1            
+        else:
+            EPOCHS = 100
+            model = VGG(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, dropout_rate=0.5).VGG16_v2()          
+     
+    elif model_name == 'SVRNet':
+        if os.path.isdir("SVDNet_model"):
+            EPOCHS = 1
+            model = tf.keras.models.load_model('SVRNet_model')
+        else:
+            EPOCHS = 100
+            model = SVRNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVRNet() 
 
 
-    if os.path.isdir("vgg_model"): 
-        # model = keras.models.load_model('vgg_model')
-        # model = tf.keras.models.load_model('SVDNet_model')
-        EPOCHS = 1
-        model = tf.keras.models.load_model('vgg_modell')
-    else:
-        EPOCHS = 100  
-        model = VGG(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, dropout_rate=0.5).VGG16_v2()
-    #     # # model = SVDNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVDNet()  
-        # model = SVRNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVRNet()  
+    elif model_name == 'SVDNet':
+        if os.path.isdir("SVDNet_model"):
+            model = tf.keras.models.load_model('SVDNet_model')
+            EPOCHS = 1            
+        else:
+            EPOCHS = 100
+            model = SVDNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVDNet()
+                    
 
     model.summary()
 
-    dot_img_file = 'vgg_model.png'
+    dot_img_file = f'{model_name}.png'
     tf.keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
 
 
@@ -114,10 +148,10 @@ if __name__ == '__main__':
         )
     print(history.history.keys())
 
-    if not os.path.isdir("vgg_model"):
-        model.save("vgg_model")
+    if not os.path.isdir(f'{model_name}_model'):
+        model.save(f'{model_name}_model')
 
-    loss, acc = model.evaluate(test_data, verbose = 0, batch_size=32)
+    loss, acc = model.evaluate(test_data, verbose = 0)
     print("Loss {}, Accuracy {}".format(loss, acc))
 
 
@@ -139,7 +173,7 @@ if __name__ == '__main__':
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig('vgg_model_accuracy.png') 
+    plt.savefig('SVDNet_model_accuracy.png') 
 
     # # summarize history for loss
     plot2 = plt.figure(2)
@@ -149,7 +183,7 @@ if __name__ == '__main__':
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig('vgg_model_lost.png')
+    plt.savefig(f'{model_name}_model_lost.png')
 
     #confusion_matrix
     plot3 = plt.figure(3)
@@ -164,5 +198,11 @@ if __name__ == '__main__':
     ax.xaxis.set_ticklabels(['False','True'])
     ax.yaxis.set_ticklabels(['False','True'])
     fig = ax.get_figure()
-    fig.savefig('vgg_model_confusion_matrix.png')
+    fig.savefig(f'{model_name}_model_confusion_matrix.png')
+
+
+if __name__ == "__main__":
+    main()
+
+
 
