@@ -24,7 +24,7 @@ $ pip install -r requirements.txt
 To Train the model, choose which model you want to train from main.py 
 
 ```bash
-python --model_name VGG16  main.py
+python --model_name ['VGG16', 'SVRNet', 'SVDNet']  main.py
 ```
 
 
