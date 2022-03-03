@@ -7,7 +7,7 @@ We used python 3.8 to run this code. To install all requirements via pip:
 $ pip install -r requirements.txt
 ```
 ## Data: COVID-19 Radiography Database (COVID-19 Chest X-ray Database)
-You can download this dataset from [here](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database?fbclid=IwAR3JBdbiHVJFYHcNlR3r3Z1esKY3UKrCHJd8Nrhv4OPXdGhOZWtEcqtjEEg). For preparing the dataset before the training the mode, the 11045 lung x-rays (Normal/COVID) images are selected as training set, and 2781 images (Normal/COVID) as test set. To improve contrast in the images, the limited contrast adaptive histogram equalization (CLAHE) is applied. To prprocess the dataset, you can run:
+You can download this dataset from [here](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database?fbclid=IwAR3JBdbiHVJFYHcNlR3r3Z1esKY3UKrCHJd8Nrhv4OPXdGhOZWtEcqtjEEg). For preparing the dataset before training the model, the 11045 lung x-rays (Normal/COVID) images are selected as the training set and 2781 images (Normal/COVID) as the test set. The limited contrast adaptive histogram equalization (CLAHE) is applied to improve contrast in the images. To preprocess the dataset, you can run:
 ```bash
 $ python preprocessing_data.py
 ```
