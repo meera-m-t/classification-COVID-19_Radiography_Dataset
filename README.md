@@ -12,7 +12,7 @@ You can download this dataset from [here](https://www.kaggle.com/tawsifurrahman/
 $ python preprocessing_data.py
 ```
 ## Train the model
-To Train the model, Run: 
+To train the model, Run: 
 ```bash
 python --model_name ['VGG16', 'SVRNet', 'SVDNet']  main.py
 ```
