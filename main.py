@@ -62,7 +62,7 @@ def  call_test_data(DATA_DIR,IMG_SIZE):
     return test_data.cache().prefetch(buffer_size=AUTOTUNE)         
 
 def main():
-    parser = argparse.ArgumentParser(description='Train different models using the COVID-19 datasets')
+    parser = argparse.ArgumentParser(description='add, modify and delete upstream nodes')
     parser.add_argument(
        '-p_train','--path_train', required=False, default='output/train', type=str, help='path train')
     parser.add_argument(
@@ -85,6 +85,8 @@ def main():
           '-b', '--batch_size', required=False, default=32, type=int, help='batch size')
   
     args = parser.parse_args()
+
+
     path_train = args.path_train
     path_test = args.path_test
     length = args.length  
@@ -122,11 +124,14 @@ def main():
         else:
             EPOCHS = 100
             model = SVDNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVDNet()
-    
-    model.summary()
-    dot_img_file = f'{model_name}.png'
+                    
 
+    model.summary()
+
+    dot_img_file = f'{model_name}.png'
     tf.keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
+
+
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),
         loss=tf.keras.losses.CategoricalCrossentropy(),
@@ -140,13 +145,16 @@ def main():
         callbacks=callback,
         batch_size=BATCH_SIZE,  
         shuffle=True
-        )   
+        )
+    print(history.history.keys())
 
     if not os.path.isdir(f'{model_name}_model'):
         model.save(f'{model_name}_model')
 
     loss, acc = model.evaluate(test_data, verbose = 0)
     print("Loss {}, Accuracy {}".format(loss, acc))
+
+
 
     predictions = np.array([])
     labels =  np.array([])
@@ -155,6 +163,8 @@ def main():
         labels = np.concatenate([labels, np.argmax(y.numpy(), axis=-1)])
 
     cf_matrix = tf.math.confusion_matrix(labels=labels, predictions=predictions).numpy()
+
+
     # summarize history for accuracy
     plot1 = plt.figure(1)
     plt.plot(history.history['categorical_accuracy'])
@@ -163,7 +173,7 @@ def main():
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig(f'{model_name}_model_accuracy.png') 
+    plt.savefig('SVDNet_model_accuracy.png') 
 
     # # summarize history for loss
     plot2 = plt.figure(2)
@@ -173,11 +183,13 @@ def main():
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig(f'{model_name}_model_loss.png')
+    plt.savefig(f'{model_name}_model_lost.png')
 
     #confusion_matrix
     plot3 = plt.figure(3)
-    ax = sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,fmt='.2%', cmap='Blues')
+    ax = sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True,
+            fmt='.2%', cmap='Blues')
+
     ax.set_title('Confusion Matrix with labels\n\n')
     ax.set_xlabel('\nPredicted Values')
     ax.set_ylabel('Actual Values ')
@@ -188,5 +200,9 @@ def main():
     fig = ax.get_figure()
     fig.savefig(f'{model_name}_model_confusion_matrix.png')
 
+
 if __name__ == "__main__":
     main()
+
+
+

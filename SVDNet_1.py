@@ -6,7 +6,6 @@ def Conv_2D_Block(inputs, model_width, kernel, strides):
     x = tf.keras.layers.Conv2D(model_width, kernel, strides=strides, padding="same", kernel_initializer="he_normal")(inputs)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.Activation('relu')(x)
-
     return x
 
 
@@ -18,24 +17,18 @@ def stem(inputs, num_filters):
     return conv
 
 
-def conv_block(x, num_filters, bottleneck=True):
+def conv_block(x, num_filters):
     # Construct Block of Convolutions without Pooling
     # x        : input into the block
     # n_filters: number of filters
-    if bottleneck:
-        num_filters_bottleneck = num_filters * 4
-        x = Conv_2D_Block(x, num_filters_bottleneck, (1, 1), (1, 1))
-
     out = Conv_2D_Block(x, num_filters, (3, 3), (1, 1))
-
     return out
 
 
-def dense_block(x, num_filters, num_layers, bottleneck=True):
+def dense_block(x, num_filters, num_layers):
     for i in range(num_layers):
-        cb = conv_block(x, num_filters, bottleneck=bottleneck)
+        cb = conv_block(x, num_filters)
         x = tf.keras.layers.concatenate([x, cb], axis=-1)
-
     return x
 
 
@@ -92,6 +85,11 @@ class SVDNet:
 
     def MLP(self, x):
         outputs = []
+        if x.shape[1] <= 2:
+            x = tf.keras.layers.MaxPooling2D(pool_size=(1, 1), strides=(2, 2), padding="same")(x)
+        else:
+            x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="same")(x)
+
         if self.pooling == 'avg':
             x = tf.keras.layers.GlobalAveragePooling2D()(x)
         elif self.pooling == 'max':
@@ -118,14 +116,16 @@ class SVDNet:
 
     def SVDNet(self):
         inputs = tf.keras.Input((self.length, self.width, self.num_channel))  # The input tensor
-        stem_block = stem(inputs, self.num_filters)  # The Stem Convolution Group
-        Dense_Block_1 = dense_block(stem_block, self.num_filters * 1, 2, bottleneck=self.bottleneck)
-        Transition_Block_1 = transition_block(Dense_Block_1, self.num_filters * 1)
-        Dense_Block_2 = dense_block(Transition_Block_1, self.num_filters * 2, 3, bottleneck=self.bottleneck)
-        Transition_Block_2 = transition_block(Dense_Block_2, self.num_filters * 2)
-        Dense_Block_3 = dense_block(Transition_Block_2, self.num_filters * 4, 3, bottleneck=self.bottleneck)
-        Transition_Block_3 = transition_block(Dense_Block_3, self.num_filters * 4)
-        Dense_Block_4 = dense_block(Transition_Block_3, self.num_filters * 8, 3, bottleneck=self.bottleneck)
+        x = tf.keras.layers.experimental.preprocessing.Rescaling(1./255)(inputs)
+        stem_block = dense_block(x, self.num_filters , 1)
+        Transition_stem_block = transition_block(stem_block, self.num_filters * 1)
+        Dense_Block_1 = dense_block(Transition_stem_block, self.num_filters * 2, 1)
+        Transition_Block_1 = transition_block(Dense_Block_1, self.num_filters * 2)
+        Dense_Block_2 = dense_block(Transition_Block_1, self.num_filters * 4, 2)
+        Transition_Block_2 = transition_block(Dense_Block_2, self.num_filters * 4)
+        Dense_Block_3 = dense_block(Transition_Block_2, self.num_filters * 8, 2)
+        Transition_Block_3 = transition_block(Dense_Block_3, self.num_filters * 8)
+        Dense_Block_4 = dense_block(Transition_Block_3, self.num_filters * 16, 2)
         outputs = self.MLP(Dense_Block_4)
         # Instantiate the Model
         model = tf.keras.Model(inputs, outputs)
