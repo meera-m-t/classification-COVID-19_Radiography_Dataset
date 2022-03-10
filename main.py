@@ -123,7 +123,7 @@ def main():
             EPOCHS = 1            
         else:
             EPOCHS = 100
-            model = SVDNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVDNet()
+            model = SVDNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.3).SVDNet()
                     
 
     model.summary()
@@ -133,7 +133,7 @@ def main():
 
 
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
         loss=tf.keras.losses.CategoricalCrossentropy(),
         metrics=[tf.keras.metrics.CategoricalAccuracy()])
 

@@ -8,12 +8,11 @@ def Conv_2D_Block(inputs, model_width, kernel, strides):
     x = tf.keras.layers.Activation('relu')(x)
     return x
 
-
 def stem(inputs, num_filters):
     # Construct the Stem Convolution Group
     # inputs : input vector
-    conv = Conv_2D_Block(inputs, num_filters, (3, 3), (1, 1))
-    conv = Conv_2D_Block(conv, num_filters, (3, 3), (1, 1))
+    conv = Conv_2D_Block(inputs, num_filters, (3, 3), (1,1))
+    conv = Conv_2D_Block(conv, num_filters, (3, 3), (1,1))
     return conv
 
 
@@ -117,15 +116,15 @@ class SVDNet:
     def SVDNet(self):
         inputs = tf.keras.Input((self.length, self.width, self.num_channel))  # The input tensor
         x = tf.keras.layers.experimental.preprocessing.Rescaling(1./255)(inputs)
-        stem_block = dense_block(x, self.num_filters , 1)
+        stem_block = stem(x, self.num_filters)
         Transition_stem_block = transition_block(stem_block, self.num_filters * 1)
-        Dense_Block_1 = dense_block(Transition_stem_block, self.num_filters * 2, 1)
+        Dense_Block_1 = dense_block(Transition_stem_block, self.num_filters * 2, 2)
         Transition_Block_1 = transition_block(Dense_Block_1, self.num_filters * 2)
-        Dense_Block_2 = dense_block(Transition_Block_1, self.num_filters * 4, 2)
+        Dense_Block_2 = dense_block(Transition_Block_1, self.num_filters * 4, 3)
         Transition_Block_2 = transition_block(Dense_Block_2, self.num_filters * 4)
-        Dense_Block_3 = dense_block(Transition_Block_2, self.num_filters * 8, 2)
+        Dense_Block_3 = dense_block(Transition_Block_2, self.num_filters * 8, 3)
         Transition_Block_3 = transition_block(Dense_Block_3, self.num_filters * 8)
-        Dense_Block_4 = dense_block(Transition_Block_3, self.num_filters * 16, 2)
+        Dense_Block_4 = dense_block(Transition_Block_3, self.num_filters * 16, 3)
         outputs = self.MLP(Dense_Block_4)
         # Instantiate the Model
         model = tf.keras.Model(inputs, outputs)
