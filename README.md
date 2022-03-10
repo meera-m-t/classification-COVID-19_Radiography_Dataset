@@ -16,3 +16,6 @@ To train the model, you can run:
 ```bash
 python --model_name ['VGG16', 'SVRNet', 'SVDNet']  main.py
 ```
+## Download trained models
+To download the trained models click [here](https://www.dropbox.com/s/7nz7xbmlmh1r0g7/models.zip?dl=0)  
+
