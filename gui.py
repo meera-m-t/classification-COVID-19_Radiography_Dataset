@@ -1,11 +1,11 @@
-import PySimpleGUI as sg
 import os.path
+
+import cv2
+import numpy as np
+import PySimpleGUI as sg
 
 # First the window layout in 2 columns
 import tensorflow.keras as keras
-import cv2
-import numpy as np
-
 
 svdnet_model_path = './SVDNet_model'
 svdnet_model = keras.models.load_model(svdnet_model_path)
@@ -27,6 +27,7 @@ MODELS = {
     "SVR": svrnet_model,
     "SVD": svdnet_model
 }
+
 
 def infer_for_filename(model, filename):
     image = cv2.imread(filename)
