@@ -83,6 +83,9 @@ def main():
         '-c', '--num_channel', required=False, default=1, type=int, help='number of channel of the image')
     parser.add_argument(
           '-b', '--batch_size', required=False, default=32, type=int, help='batch size')
+    parser.add_argument(
+        '-e', '--epochs', required=False, default=15, type=int, help="Number of epochs"
+    )
   
     args = parser.parse_args()
 
@@ -99,30 +102,25 @@ def main():
     train_data, val_data = train_val_split(path_train, length)
     test_data = call_test_data(path_test, length)
     BATCH_SIZE = args.batch_size
+    EPOCHS = args.epochs
     
     if model_name == 'VGG16':
         if os.path.isdir("vgg_model"):
             model = keras.models.load_model('vgg_model')
-            EPOCHS = 1            
         else:
-            EPOCHS = 100
-            model = VGG(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, dropout_rate=0.5).VGG16_v2()          
+            model = VGG(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, dropout_rate=0.5).VGG16_v2()
      
     elif model_name == 'SVRNet':
-        if os.path.isdir("SVDNet_model"):
-            EPOCHS = 1
+        if os.path.isdir("SVRNet_model"):
             model = tf.keras.models.load_model('SVRNet_model')
         else:
-            EPOCHS = 100
-            model = SVRNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVRNet() 
+            model = SVRNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.5).SVRNet()
 
 
     elif model_name == 'SVDNet':
         if os.path.isdir("SVDNet_model"):
             model = tf.keras.models.load_model('SVDNet_model')
-            EPOCHS = 1            
         else:
-            EPOCHS = 100
             model = SVDNet(length, width, num_channel, model_width, problem_type=problem_type, output_nums=output_nums, pooling='max', dropout_rate=0.3).SVDNet()
                     
 
@@ -139,11 +137,11 @@ def main():
 
     callback = EarlyStopping(monitor='categorical_accuracy', patience=10)
     history = model.fit(
-        train_data,    
-        validation_data=val_data,  
+        train_data,
+        validation_data=val_data,
         epochs=EPOCHS,
         callbacks=callback,
-        batch_size=BATCH_SIZE,  
+        batch_size=BATCH_SIZE,
         shuffle=True
         )
     print(history.history.keys())
@@ -173,7 +171,7 @@ def main():
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig('SVDNet_model_accuracy.png') 
+    plt.savefig(f'{model_name}_model_accuracy.png')
 
     # # summarize history for loss
     plot2 = plt.figure(2)
@@ -194,9 +192,9 @@ def main():
     ax.set_xlabel('\nPredicted Values')
     ax.set_ylabel('Actual Values ')
 
-    ## Ticket labels - List must be in alphabetical order
-    ax.xaxis.set_ticklabels(['False','True'])
-    ax.yaxis.set_ticklabels(['False','True'])
+    ## Ticket labels - List must be in alphabetical orderls
+    ax.xaxis.set_ticklabels(['COVID','Normal', "Viral Pneumonia"])
+    ax.yaxis.set_ticklabels(['COVID','Normal', "Viral Pneumonia"])
     fig = ax.get_figure()
     fig.savefig(f'{model_name}_model_confusion_matrix.png')
 
