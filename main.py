@@ -89,7 +89,7 @@ def  call_test_data(DATA_DIR, IMG_SIZE):
     return test_data.cache().prefetch(buffer_size=AUTOTUNE)         
 
 def main():
-    parser = argparse.ArgumentParser(description='add, modify and delete upstream nodes')
+    parser = argparse.ArgumentParser(description='determine the parameters in our model to classifiy x-ray images using three models (VGG16, SVRNet, SVDNet)')
     parser.add_argument(
        '-p_train','--path_train', required=False, default='output/train', type=str, help='path train')
     parser.add_argument(
