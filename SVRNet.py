@@ -1,5 +1,6 @@
 import tensorflow as tf
-from  tensorflow.keras.utils import to_categorical 
+from tensorflow.keras.utils import to_categorical
+
 
 def Conv_2D_Block(inputs, model_width, kernel, strides):
     # 2D Convolutional Block with BatchNormalization
