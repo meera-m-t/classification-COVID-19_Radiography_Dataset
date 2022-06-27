@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import splitfolders
 import os
+import argparse
 
 def preprocess(path_dataset, path_workspace):
     names = [item for item in os.listdir(path_dataset) if os.path.isdir(os.path.join(path_dataset, item))]
