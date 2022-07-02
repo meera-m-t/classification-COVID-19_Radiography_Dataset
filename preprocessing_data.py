@@ -15,8 +15,9 @@ def preprocess(path_dataset, path_workspace):
             image = cv2.imread(file)
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-            equalized = clahe.apply(gray)
-            os.makedirs('{path_workspace}/preprocessed_data')
+            equalized = clahe.apply(gray)            
+            if not os.path.exists (f'{path_workspace}/fpreprocessed_data/{name}'):
+                os.mkdir(f'{path_workspace}/final_data/{name}')      
             cv2.imwrite(f"{path_workspace}/preprocessed_data/{name}/path_workspace {name_file", equalized)
 
 def split_data(path):
