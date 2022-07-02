@@ -20,14 +20,14 @@ def preprocess(path_dataset, path_workspace):
             cv2.imwrite(f"{path_workspace}/preprocessed_data/{name}/path_workspace {name_file", equalized)
 
 def split_data(path):
-    splitfolders.ratio(f'{path/preprocessed_data}', output="path/output", seed=1337, ratio=(.8, 0.2))
+    splitfolders.ratio(f'{path}/preprocessed_data', output="path/output", seed=1337, ratio=(.8, 0.2))
 
 def main():
-    parser = argparse.ArgumentParser(description='add, modify and delete upstream nodes')
+    parser = argparse.ArgumentParser(description='preprocess dataset')
     parser.add_argument(
        '-p','--path_dataset', required=False, default='COVID-19_Radiography_Dataset', type=str, help='path of dataset')
     parser.add_argument(
-       '-p_ws','--path_workspace', required=False, default='classification-COVID-19_Radiography_Dataset', type=str, help='path of dataset')    
+       '-p_ws','--path_workspace', required=False, default='classification-COVID-19_Radiography_Dataset', type=str, help='path of workspace')    
     args = parser.parse_args()
     path_dataset = args.path_dataset
     path_workspace = args.path_workspace
